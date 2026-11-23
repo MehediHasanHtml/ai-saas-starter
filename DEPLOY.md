@@ -11,17 +11,31 @@ Replace `yourdomain.com` and `USER` (your cPanel username) everywhere below.
 
 ---
 
-## 1. Build the API bundle (on your PC)
+## 1. Get the file you will upload
 
-Docker must be running. In the project folder:
+You upload **one zip file** to cPanel:
 
-```bash
-bash deploy/build-cpanel.sh
+```
+D:\mehedi\ai-saas-starter\deploy\dist\margin-api-cpanel.zip
 ```
 
-This creates **`deploy/dist/margin-api-cpanel.zip`**: the API with its PHP
-packages already installed, so the server needs no Composer. It contains no
-`.env` and no secrets.
+It is the `backend` folder plus everything it needs to run (the `vendor`
+folder of PHP libraries), packed and ready. It has no passwords or keys in it.
+
+**The zip already exists, so skip to step 2.**
+
+You only make a new zip after you change code in the `backend` folder:
+
+1. Start **Docker Desktop**.
+2. Open **PowerShell** in `D:\mehedi\ai-saas-starter`.
+3. Run:
+
+   ```powershell
+   & "C:\Program Files\Git\bin\bash.exe" deploy/build-cpanel.sh
+   ```
+
+4. After 1–2 minutes it prints `Wrote ... margin-api-cpanel.zip`. The new zip
+   replaces the old one in the same place.
 
 ## 2. Prepare cPanel
 
