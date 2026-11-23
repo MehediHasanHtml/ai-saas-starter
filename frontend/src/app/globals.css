@@ -1,0 +1,278 @@
+@import "tailwindcss";
+
+/*
+  Design tokens
+  - paper/surface/ink/line: a cool, quiet working surface
+  - highlight: highlighter yellow, used only for things that come from the
+    user's documents (citations, matched passages). It is the one loud colour.
+  - action: cobalt for primary actions and focus
+  - Plex Sans for the interface, Plex Serif for document text, Plex Mono for code
+*/
+@theme {
+  --color-paper: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-ink: #172033;
+  --color-muted: #5e6878;
+  --color-faint: #8a93a2;
+  --color-line: #dee3ea;
+  --color-line-strong: #c8cfd9;
+  --color-highlight: #f5dc5a;
+  --color-highlight-soft: #fbf1b8;
+  --color-action: #2547d0;
+  --color-action-hover: #1b3aae;
+  --color-action-soft: #e8edfc;
+  --color-danger: #c2362b;
+  --color-danger-soft: #fbe9e7;
+  --color-success: #1f7a4d;
+  --color-success-soft: #e3f3ea;
+
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "IBM Plex Serif", ui-serif, Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+
+  --ease-out-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --animate-fade-up: fade-up 0.6s var(--ease-out-soft) both;
+  --animate-fade-in: fade-in 0.4s ease-out both;
+  --animate-slide-down: slide-down 0.5s var(--ease-out-soft) both;
+  --animate-bar: bar-grow 0.7s var(--ease-out-soft) both;
+  --animate-pop: pop 0.45s var(--ease-out-soft) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-100%);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes bar-grow {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+  @keyframes pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    70% {
+      transform: scale(1.12);
+    }
+    100% {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+  /* Keep anchor targets clear of the fixed marketing header */
+  scroll-padding-top: 5rem;
+}
+
+@keyframes bar-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Scroll-reveal (see components/marketing/reveal.tsx) */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s var(--ease-out-soft),
+    transform 0.7s var(--ease-out-soft);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal[data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Underline that grows from the left on hover */
+.link-grow {
+  background: linear-gradient(currentColor, currentColor) no-repeat left bottom / 0 1.5px;
+  transition: background-size 0.25s var(--ease-out-soft), color 0.2s;
+}
+.link-grow:hover,
+.link-grow[aria-current] {
+  background-size: 100% 1.5px;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* In the base layer so a component's own `outline-none` (e.g. the chat
+   composer, which draws its focus state on the surrounding card) can win. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-action);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+}
+
+::selection {
+  background: var(--color-highlight-soft);
+}
+
+/* Highlighter mark for document-sourced text */
+.mark {
+  background: linear-gradient(transparent 12%, var(--color-highlight-soft) 12%, var(--color-highlight-soft) 92%, transparent 92%);
+  padding: 0 0.1em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Inline citation chip [1] inside AI answers */
+.cite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35em;
+  height: 1.35em;
+  padding: 0 0.3em;
+  margin: 0 0.1em;
+  border-radius: 3px;
+  background: var(--color-highlight);
+  color: var(--color-ink);
+  font-size: 0.72em;
+  font-weight: 600;
+  vertical-align: 0.15em;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Markdown inside chat answers */
+.prose-chat {
+  overflow-wrap: anywhere;
+}
+.prose-chat > * + * {
+  margin-top: 0.75em;
+}
+.prose-chat ul {
+  list-style: disc;
+  padding-left: 1.25em;
+}
+.prose-chat ol {
+  list-style: decimal;
+  padding-left: 1.25em;
+}
+.prose-chat li + li {
+  margin-top: 0.25em;
+}
+.prose-chat a {
+  color: var(--color-action);
+  text-decoration: underline;
+}
+.prose-chat code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  padding: 0.05em 0.3em;
+}
+.prose-chat pre {
+  background: var(--color-ink);
+  color: #e8ecf3;
+  border-radius: var(--radius-md);
+  padding: 0.9em 1em;
+  overflow-x: auto;
+}
+.prose-chat pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+}
+.prose-chat h1,
+.prose-chat h2,
+.prose-chat h3 {
+  font-weight: 600;
+  line-height: 1.3;
+}
+.prose-chat table {
+  border-collapse: collapse;
+  font-size: 0.92em;
+}
+.prose-chat th,
+.prose-chat td {
+  border: 1px solid var(--color-line);
+  padding: 0.35em 0.6em;
+  text-align: left;
+}
+
+/* Streaming caret */
+.caret::after,
+.streaming .prose-chat > :last-child::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: var(--color-ink);
+  animation: blink 1s steps(2, start) infinite;
+}
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}

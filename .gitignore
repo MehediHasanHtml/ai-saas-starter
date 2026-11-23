@@ -1,0 +1,9 @@
+.DS_Store
+.idea/
+.vscode/
+
+# Local secrets (API keys) read by docker compose
+.env
+
+# Built deployment bundles
+deploy/dist/

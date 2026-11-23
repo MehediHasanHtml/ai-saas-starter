@@ -1,0 +1,20 @@
+# Fallback for hosts where the domain's document root can't point at
+# public/ directly (e.g. the files were uploaded straight into public_html).
+# Preferred setup: point the API subdomain's document root at .../public
+# and this file is never used.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Never serve secrets or source files, even if rewriting is unavailable.
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+<FilesMatch "\.(env|log|lock|json|xml|md|sh|sql|yml|yaml|neon)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes
